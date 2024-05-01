@@ -19,7 +19,7 @@ job "python" {
       driver = "docker"
 
       config {
-        image = "nomad:local"
+        image = "nomad-python:local"
         tty = true
         ports = ["python"]
         extra_hosts = ["host.docker.internal:host-gateway"]

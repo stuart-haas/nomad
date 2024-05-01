@@ -1,3 +1,9 @@
+build-python:
+	docker build -t nomad-python:local -f ops/docker/python/Dockerfile .
+
+run-python:
+	docker run --rm -it nomad-python:local
+
 start-agent:
 	sudo nomad agent -dev -config config/server.hcl
 
