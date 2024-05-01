@@ -1,4 +1,4 @@
-bind_addr = "{{ GetInterfaceIP \"br-63d2c2609ebc\" }}"
+bind_addr = "{{ GetPrivateIP }}"
 
 client {
   enabled = true
