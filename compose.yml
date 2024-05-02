@@ -1,0 +1,22 @@
+version: '3.7'
+services:
+  go:
+    container_name: nomad_go
+    restart: always
+    tty: true
+    build:
+      dockerfile: ops/docker/go/Dockerfile
+      context: .
+    entrypoint: ./ops/docker/go/entrypoint.sh
+    volumes:
+      - ./:/app
+  python:
+    container_name: nomad_python
+    restart: always
+    tty: true
+    build:
+      dockerfile: ops/docker/python/Dockerfile
+      context: .
+    entrypoint: ./ops/docker/python/entrypoint.sh
+    volumes:
+      - ./:/app

@@ -1,0 +1,14 @@
+syntax = "proto3";
+package api;
+
+option go_package = "./proto";
+
+message InferenceRequest {}
+
+message InferenceResponse {
+  int32 value = 1;
+}
+
+service InferenceService {
+  rpc Infernece (InferenceRequest) returns (stream InferenceResponse);
+}

@@ -3,7 +3,7 @@ import time
 
 def main():
     while True:
-        print("ready")
+        print("hello python")
         time.sleep(3)
 
 
