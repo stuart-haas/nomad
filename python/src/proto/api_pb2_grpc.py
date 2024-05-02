@@ -39,8 +39,13 @@ class InferenceServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.Infernece = channel.unary_stream(
-                '/api.InferenceService/Infernece',
+        self.Inference = channel.unary_unary(
+                '/api.InferenceService/Inference',
+                request_serializer=proto_dot_api__pb2.InferenceRequest.SerializeToString,
+                response_deserializer=proto_dot_api__pb2.InferenceResponse.FromString,
+                _registered_method=True)
+        self.InferenceStream = channel.unary_stream(
+                '/api.InferenceService/InferenceStream',
                 request_serializer=proto_dot_api__pb2.InferenceRequest.SerializeToString,
                 response_deserializer=proto_dot_api__pb2.InferenceResponse.FromString,
                 _registered_method=True)
@@ -49,7 +54,13 @@ class InferenceServiceStub(object):
 class InferenceServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def Infernece(self, request, context):
+    def Inference(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def InferenceStream(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -58,8 +69,13 @@ class InferenceServiceServicer(object):
 
 def add_InferenceServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Infernece': grpc.unary_stream_rpc_method_handler(
-                    servicer.Infernece,
+            'Inference': grpc.unary_unary_rpc_method_handler(
+                    servicer.Inference,
+                    request_deserializer=proto_dot_api__pb2.InferenceRequest.FromString,
+                    response_serializer=proto_dot_api__pb2.InferenceResponse.SerializeToString,
+            ),
+            'InferenceStream': grpc.unary_stream_rpc_method_handler(
+                    servicer.InferenceStream,
                     request_deserializer=proto_dot_api__pb2.InferenceRequest.FromString,
                     response_serializer=proto_dot_api__pb2.InferenceResponse.SerializeToString,
             ),
@@ -74,7 +90,34 @@ class InferenceService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def Infernece(request,
+    def Inference(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/api.InferenceService/Inference',
+            proto_dot_api__pb2.InferenceRequest.SerializeToString,
+            proto_dot_api__pb2.InferenceResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def InferenceStream(request,
             target,
             options=(),
             channel_credentials=None,
@@ -87,7 +130,7 @@ class InferenceService(object):
         return grpc.experimental.unary_stream(
             request,
             target,
-            '/api.InferenceService/Infernece',
+            '/api.InferenceService/InferenceStream',
             proto_dot_api__pb2.InferenceRequest.SerializeToString,
             proto_dot_api__pb2.InferenceResponse.FromString,
             options,

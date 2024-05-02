@@ -22,7 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InferenceServiceClient interface {
-	Infernece(ctx context.Context, in *InferenceRequest, opts ...grpc.CallOption) (InferenceService_InferneceClient, error)
+	Inference(ctx context.Context, in *InferenceRequest, opts ...grpc.CallOption) (*InferenceResponse, error)
+	InferenceStream(ctx context.Context, in *InferenceRequest, opts ...grpc.CallOption) (InferenceService_InferenceStreamClient, error)
 }
 
 type inferenceServiceClient struct {
@@ -33,12 +34,21 @@ func NewInferenceServiceClient(cc grpc.ClientConnInterface) InferenceServiceClie
 	return &inferenceServiceClient{cc}
 }
 
-func (c *inferenceServiceClient) Infernece(ctx context.Context, in *InferenceRequest, opts ...grpc.CallOption) (InferenceService_InferneceClient, error) {
-	stream, err := c.cc.NewStream(ctx, &InferenceService_ServiceDesc.Streams[0], "/api.InferenceService/Infernece", opts...)
+func (c *inferenceServiceClient) Inference(ctx context.Context, in *InferenceRequest, opts ...grpc.CallOption) (*InferenceResponse, error) {
+	out := new(InferenceResponse)
+	err := c.cc.Invoke(ctx, "/api.InferenceService/Inference", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &inferenceServiceInferneceClient{stream}
+	return out, nil
+}
+
+func (c *inferenceServiceClient) InferenceStream(ctx context.Context, in *InferenceRequest, opts ...grpc.CallOption) (InferenceService_InferenceStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &InferenceService_ServiceDesc.Streams[0], "/api.InferenceService/InferenceStream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &inferenceServiceInferenceStreamClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -48,16 +58,16 @@ func (c *inferenceServiceClient) Infernece(ctx context.Context, in *InferenceReq
 	return x, nil
 }
 
-type InferenceService_InferneceClient interface {
+type InferenceService_InferenceStreamClient interface {
 	Recv() (*InferenceResponse, error)
 	grpc.ClientStream
 }
 
-type inferenceServiceInferneceClient struct {
+type inferenceServiceInferenceStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *inferenceServiceInferneceClient) Recv() (*InferenceResponse, error) {
+func (x *inferenceServiceInferenceStreamClient) Recv() (*InferenceResponse, error) {
 	m := new(InferenceResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -69,7 +79,8 @@ func (x *inferenceServiceInferneceClient) Recv() (*InferenceResponse, error) {
 // All implementations must embed UnimplementedInferenceServiceServer
 // for forward compatibility
 type InferenceServiceServer interface {
-	Infernece(*InferenceRequest, InferenceService_InferneceServer) error
+	Inference(context.Context, *InferenceRequest) (*InferenceResponse, error)
+	InferenceStream(*InferenceRequest, InferenceService_InferenceStreamServer) error
 	mustEmbedUnimplementedInferenceServiceServer()
 }
 
@@ -77,8 +88,11 @@ type InferenceServiceServer interface {
 type UnimplementedInferenceServiceServer struct {
 }
 
-func (UnimplementedInferenceServiceServer) Infernece(*InferenceRequest, InferenceService_InferneceServer) error {
-	return status.Errorf(codes.Unimplemented, "method Infernece not implemented")
+func (UnimplementedInferenceServiceServer) Inference(context.Context, *InferenceRequest) (*InferenceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Inference not implemented")
+}
+func (UnimplementedInferenceServiceServer) InferenceStream(*InferenceRequest, InferenceService_InferenceStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method InferenceStream not implemented")
 }
 func (UnimplementedInferenceServiceServer) mustEmbedUnimplementedInferenceServiceServer() {}
 
@@ -93,24 +107,42 @@ func RegisterInferenceServiceServer(s grpc.ServiceRegistrar, srv InferenceServic
 	s.RegisterService(&InferenceService_ServiceDesc, srv)
 }
 
-func _InferenceService_Infernece_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _InferenceService_Inference_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InferenceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InferenceServiceServer).Inference(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.InferenceService/Inference",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InferenceServiceServer).Inference(ctx, req.(*InferenceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InferenceService_InferenceStream_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(InferenceRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(InferenceServiceServer).Infernece(m, &inferenceServiceInferneceServer{stream})
+	return srv.(InferenceServiceServer).InferenceStream(m, &inferenceServiceInferenceStreamServer{stream})
 }
 
-type InferenceService_InferneceServer interface {
+type InferenceService_InferenceStreamServer interface {
 	Send(*InferenceResponse) error
 	grpc.ServerStream
 }
 
-type inferenceServiceInferneceServer struct {
+type inferenceServiceInferenceStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *inferenceServiceInferneceServer) Send(m *InferenceResponse) error {
+func (x *inferenceServiceInferenceStreamServer) Send(m *InferenceResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
@@ -120,11 +152,16 @@ func (x *inferenceServiceInferneceServer) Send(m *InferenceResponse) error {
 var InferenceService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "api.InferenceService",
 	HandlerType: (*InferenceServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Inference",
+			Handler:    _InferenceService_Inference_Handler,
+		},
+	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "Infernece",
-			Handler:       _InferenceService_Infernece_Handler,
+			StreamName:    "InferenceStream",
+			Handler:       _InferenceService_InferenceStream_Handler,
 			ServerStreams: true,
 		},
 	},

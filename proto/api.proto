@@ -3,12 +3,15 @@ package api;
 
 option go_package = "./proto";
 
-message InferenceRequest {}
+message InferenceRequest {
+  int32 value = 1;
+}
 
 message InferenceResponse {
   int32 value = 1;
 }
 
 service InferenceService {
-  rpc Infernece (InferenceRequest) returns (stream InferenceResponse);
+  rpc Inference (InferenceRequest) returns (InferenceResponse) {}
+  rpc InferenceStream (InferenceRequest) returns (stream InferenceResponse) {}
 }

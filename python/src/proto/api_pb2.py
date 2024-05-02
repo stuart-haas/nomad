@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fproto/api.proto\x12\x03\x61pi\"\x12\n\x10InferenceRequest\"\"\n\x11InferenceResponse\x12\r\n\x05value\x18\x01 \x01(\x05\x32P\n\x10InferenceService\x12<\n\tInfernece\x12\x15.api.InferenceRequest\x1a\x16.api.InferenceResponse0\x01\x42\tZ\x07./protob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fproto/api.proto\x12\x03\x61pi\"!\n\x10InferenceRequest\x12\r\n\x05value\x18\x01 \x01(\x05\"\"\n\x11InferenceResponse\x12\r\n\x05value\x18\x01 \x01(\x05\x32\x96\x01\n\x10InferenceService\x12<\n\tInference\x12\x15.api.InferenceRequest\x1a\x16.api.InferenceResponse\"\x00\x12\x44\n\x0fInferenceStream\x12\x15.api.InferenceRequest\x1a\x16.api.InferenceResponse\"\x00\x30\x01\x42\tZ\x07./protob\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -23,9 +23,9 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'Z\007./proto'
   _globals['_INFERENCEREQUEST']._serialized_start=24
-  _globals['_INFERENCEREQUEST']._serialized_end=42
-  _globals['_INFERENCERESPONSE']._serialized_start=44
-  _globals['_INFERENCERESPONSE']._serialized_end=78
-  _globals['_INFERENCESERVICE']._serialized_start=80
-  _globals['_INFERENCESERVICE']._serialized_end=160
+  _globals['_INFERENCEREQUEST']._serialized_end=57
+  _globals['_INFERENCERESPONSE']._serialized_start=59
+  _globals['_INFERENCERESPONSE']._serialized_end=93
+  _globals['_INFERENCESERVICE']._serialized_start=96
+  _globals['_INFERENCESERVICE']._serialized_end=246
 # @@protoc_insertion_point(module_scope)
