@@ -9,14 +9,14 @@ services:
     command: ./ops/docker/go/command.sh
     volumes:
       - ./:/app
-  # python:
-  #   container_name: nomad_python
-  #   tty: true
-  #   build:
-  #     dockerfile: ops/docker/python/Dockerfile
-  #     context: .
-  #   command: ./ops/docker/python/command.sh
-  #   volumes:
-  #     - ./:/app
-  #   depends_on:
-  #     - go
+  python:
+    container_name: nomad_python
+    tty: true
+    build:
+      dockerfile: ops/docker/python/Dockerfile
+      context: .
+    command: ./ops/docker/python/command.sh
+    volumes:
+      - ./:/app
+    depends_on:
+      - go
