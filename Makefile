@@ -17,10 +17,6 @@ start-agent-local:
 start-agent-cloud:
 	sudo nomad agent -dev -config config/cloud.hcl
 
-# Add the Nomad python job.
-run-python-job:
-	nomad run jobs/python.nomad.hcl
-
 # Run the Nomad python job.
 add-python-job:
 	nomad job run jobs/python.nomad.hcl
