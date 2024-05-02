@@ -6,6 +6,7 @@ services:
     build:
       dockerfile: ops/docker/go/Dockerfile
       context: .
+    image: nomad-go:local
     command: ./ops/docker/go/command.sh
     volumes:
       - ./:/app
@@ -15,6 +16,7 @@ services:
     build:
       dockerfile: ops/docker/python/Dockerfile
       context: .
+    image: nomad-python:local
     command: ./ops/docker/python/command.sh
     volumes:
       - ./:/app

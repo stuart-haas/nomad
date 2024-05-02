@@ -1,16 +1,26 @@
+# Run go test in nomad_go container.
 go-test:
-	uuid=$$(docker run --rm -it -d -v ./:/app --workdir /app/go nomad-go go run main.go); \
-	docker exec -it --workdir /app/go $$uuid go test; \
-	docker container stop $$uuid
+	docker exec -it --workdir /app/go nomad_go go test
 
+# Run pytest in nomad_python container.
 python-test:
 	docker exec -it --workdir /app/python nomad_python pytest
 
-start-agent:
-	sudo nomad agent -dev -config config/server.hcl
+# Run go-test and python-test.
+test: go-test python-test
 
-kill-agent:
-	sudo fuser -k 4647/tcp
+# Start the Nomad agent in development mode for local.
+start-agent-local:
+	sudo nomad agent -dev -config config/local.hcl
 
+# Start the Nomad agent in development mode for cloud.
+start-agent-cloud:
+	sudo nomad agent -dev -config config/cloud.hcl
+
+# Add the Nomad python job.
 run-python-job:
+	nomad run jobs/python.nomad.hcl
+
+# Run the Nomad python job.
+add-python-job:
 	nomad job run jobs/python.nomad.hcl

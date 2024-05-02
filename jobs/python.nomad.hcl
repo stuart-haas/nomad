@@ -5,7 +5,7 @@ job "python" {
     count = 1
     network {
       port "python" {
-        to = 3002
+        to = 50052
       }
     }
 
