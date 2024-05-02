@@ -4,7 +4,7 @@ go-test:
 	docker container stop $$uuid
 
 python-test:
-	docker run --rm -it -v ./:/app --workdir /app/python/tests nomad-python pytest
+	docker exec -it --workdir /app/python nomad_python pytest
 
 start-agent:
 	sudo nomad agent -dev -config config/server.hcl
